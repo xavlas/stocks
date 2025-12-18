@@ -11,7 +11,7 @@ npm install
 ## 💻 Développement
 
 ```bash
-npm run dev
+npm run dev 
 ```
 
 L'application sera disponible sur `http://localhost:5173`
