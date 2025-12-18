@@ -10,6 +10,7 @@ export const RuleEditor: React.FC = () => {
     const { strategy, addRule, updateRule, removeRule } = useStrategy();
     const [isEditing, setIsEditing] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [hoveredRuleId, setHoveredRuleId] = useState<string | null>(null);
 
     // Form State
     const [left, setLeft] = useState<IndicatorConfig>({ ...DEFAULT_INDICATOR });
@@ -243,24 +244,63 @@ export const RuleEditor: React.FC = () => {
                             }}>
                                 {index + 1}
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                <div>
-                                    <strong>IF</strong> {rule.condition.left.type.toUpperCase()}
-                                    {rule.condition.left.period && `(${rule.condition.left.period})`}
-                                    {' '}{rule.condition.operator}{' '}
-                                    {rule.condition.right.type === 'value'
-                                        ? rule.condition.right.value
-                                        : `${rule.condition.right.indicator?.type.toUpperCase()} (${rule.condition.right.indicator?.period || ''})`}
-                                </div>
-                                <div style={{ fontSize: '11px', color: '#666', fontStyle: 'italic' }}>
-                                    {getRuleDescription(rule)}
-                                </div>
+                            <div>
+                                <strong>IF</strong> {rule.condition.left.type.toUpperCase()}
+                                {rule.condition.left.period && `(${rule.condition.left.period})`}
+                                {' '}{rule.condition.operator}{' '}
+                                {rule.condition.right.type === 'value'
+                                    ? rule.condition.right.value
+                                    : `${rule.condition.right.indicator?.type.toUpperCase()} (${rule.condition.right.indicator?.period || ''})`}
                             </div>
                         </div>
                         <div>
                             <strong>THEN</strong> {rule.action.type === 'buy' ? '🟢 BUY' : '🔴 SELL'} {rule.action.quantity}
                         </div>
-                        <div style={{ display: 'flex', gap: '5px' }}>
+                        <div style={{ display: 'flex', gap: '5px', alignItems: 'center', position: 'relative' }}>
+                            {/* Info Icon with Tooltip */}
+                            <div
+                                onMouseEnter={() => setHoveredRuleId(rule.id)}
+                                onMouseLeave={() => setHoveredRuleId(null)}
+                                style={{
+                                    cursor: 'help',
+                                    fontSize: '1.2em',
+                                    color: '#2196F3',
+                                    position: 'relative'
+                                }}
+                            >
+                                ℹ️
+                                {hoveredRuleId === rule.id && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        bottom: '100%',
+                                        right: 0,
+                                        marginBottom: '8px',
+                                        backgroundColor: '#2C3E50',
+                                        color: 'white',
+                                        padding: '10px 15px',
+                                        borderRadius: '8px',
+                                        fontSize: '12px',
+                                        whiteSpace: 'normal',
+                                        maxWidth: '300px',
+                                        zIndex: 1000,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                                        fontStyle: 'italic',
+                                        lineHeight: '1.4'
+                                    }}>
+                                        {getRuleDescription(rule)}
+                                        <div style={{
+                                            position: 'absolute',
+                                            bottom: '-6px',
+                                            right: '20px',
+                                            width: 0,
+                                            height: 0,
+                                            borderLeft: '6px solid transparent',
+                                            borderRight: '6px solid transparent',
+                                            borderTop: '6px solid #2C3E50'
+                                        }} />
+                                    </div>
+                                )}
+                            </div>
                             <button className={styles.btnEdit} onClick={() => handleEdit(rule)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2em' }}>✏️</button>
                             <button className={styles.btnDelete} onClick={() => removeRule(rule.id)}>X</button>
                         </div>

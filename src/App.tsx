@@ -11,11 +11,46 @@ import { Login } from './components/Login';
 function Dashboard() {
   const { strategy } = useStrategy();
   const { runSimulation, isRunning, result, error } = useSimulation();
+  const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [isResizing, setIsResizing] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX;
+      if (newWidth >= 150 && newWidth <= 500) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   return (
     <div style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       {/* Sidebar */}
-      <div style={{ width: '250px', background: 'var(--card-bg)', borderRight: '1px solid #E0E5F2', display: 'flex', flexDirection: 'column', padding: '30px 20px' }}>
+      <div style={{
+        width: `${sidebarWidth}px`,
+        background: 'var(--card-bg)',
+        borderRight: '1px solid #E0E5F2',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '30px 20px',
+        position: 'relative',
+        userSelect: isResizing ? 'none' : 'auto'
+      }}>
         <div style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '50px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ color: 'var(--primary-blue)' }}>⚡</span> STOCK <span style={{ fontWeight: 300 }}>AI</span>
         </div>
@@ -25,6 +60,28 @@ function Dashboard() {
           <NavItem icon="📈" label="Analytics" />
           <NavItem icon="⚙️" label="Settings" />
         </nav>
+
+        {/* Resize Handle */}
+        <div
+          onMouseDown={() => setIsResizing(true)}
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '5px',
+            cursor: 'col-resize',
+            backgroundColor: isResizing ? 'var(--primary-blue)' : 'transparent',
+            transition: 'background-color 0.2s',
+            zIndex: 10
+          }}
+          onMouseEnter={(e) => {
+            if (!isResizing) e.currentTarget.style.backgroundColor = '#E0E5F2';
+          }}
+          onMouseLeave={(e) => {
+            if (!isResizing) e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        />
       </div>
 
       {/* Main Content */}

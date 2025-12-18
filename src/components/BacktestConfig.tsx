@@ -69,7 +69,13 @@ export const BacktestConfig: React.FC<Props> = ({ onRun, isRunning }) => {
 
             setStrategy(optimized);
             setThinkProgress('');
-            alert('AI has generated an optimized strategy! Check the rules below.');
+
+            // Auto-run backtest with optimized strategy
+            setThinkProgress('Running backtest...');
+            await new Promise(resolve => setTimeout(resolve, 500)); // Small delay for UI update
+            onRun(selectedAsset, startDate, endDate, initialCapital, maxTrades);
+
+            alert('AI optimization complete! Backtest results are displayed below.');
         } catch (e) {
             alert('Optimization failed: ' + (e as Error).message);
         } finally {
@@ -80,7 +86,7 @@ export const BacktestConfig: React.FC<Props> = ({ onRun, isRunning }) => {
     return (
         <div className={`card ${styles.container}`}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>Simulation Setup</h2>
+                <h2></h2>
                 <button
                     onClick={handleUpdateData}
                     disabled={isUpdating}
