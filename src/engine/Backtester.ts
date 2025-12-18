@@ -133,7 +133,6 @@ export class Backtester {
         uniqueIndicators.forEach(ui => {
             const [type, periodStr] = ui.split(':');
             const p = Number(periodStr) || 14;
-            const periodLabel = !isNaN(Number(periodStr)) ? periodStr : '14'; // Ensure label is clean
             let values: number[] = [];
             let color = '#FFA726'; // Default Orange
 

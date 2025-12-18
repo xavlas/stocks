@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": { "update-data": "node scripts/fetch-real-data.js",
+  "scripts": {
+    "update-data": "node scripts/fetch-real-data.js",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
