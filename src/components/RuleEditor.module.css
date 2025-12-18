@@ -1,0 +1,102 @@
+.container {
+    height: 100%;
+}
+
+.container h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.ruleList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ruleItem {
+    background: #F4F7FE;
+    /* Light Grey Blue */
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--primary-blue);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.02);
+    color: var(--text-primary);
+    font-size: 13px;
+    /* Reduced font size */
+}
+
+.ruleItem.sell {
+    border-left-color: #E31A1A;
+    /* Red */
+}
+
+.form {
+    background: #FFFFFF;
+    padding: 24px;
+    border-radius: 20px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #E0E5F2;
+    box-shadow: 0px 18px 40px rgba(112, 144, 176, 0.12);
+}
+
+.row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #E0E5F2;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    min-width: 60px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btnDelete {
+    background: #FFF0F0;
+    color: #E31A1A;
+    padding: 5px 10px;
+}
+
+.btnDelete:hover {
+    background: #FFE5E5;
+}
+
+.btnEdit {
+    color: var(--text-secondary);
+}
+
+.btnEdit:hover {
+    color: var(--primary-blue);
+}
+
+.indicatorConfig {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    background: #F8F9FA;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #E0E5F2;
+}

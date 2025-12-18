@@ -1,0 +1,27 @@
+.container {
+    margin-bottom: 20px;
+}
+
+.grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.field label {
+    font-size: 0.9em;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.action {
+    flex: 1;
+    text-align: right;
+}
