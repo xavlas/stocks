@@ -32,7 +32,19 @@ npm test
 
 ## 📦 Déploiement sur Cloudflare Pages
 
-### Configuration du Build
+### Déploiement Rapide (Local)
+
+```bash
+# 1. Builder l'application
+npm run build
+
+# 2. Déployer sur Cloudflare Pages
+npx wrangler pages deploy
+```
+
+Le fichier `wrangler.toml` est configuré pour déployer automatiquement le dossier `dist/`.
+
+### Déploiement Automatique (Git)
 
 Dans Cloudflare Pages, configurez :
 
@@ -59,6 +71,8 @@ Identifiants par défaut :
 - ✅ Règles personnalisables avec conditions complexes
 - ✅ Support de multiples actifs (AAPL, MSFT, NVDA, TSLA, BTC, etc.)
 - ✅ Authentification par session
+- ✅ Sidebar redimensionnable
+- ✅ Infobulles explicatives en français
 
 ## 🛠️ Technologies
 
@@ -66,6 +80,7 @@ Identifiants par défaut :
 - **Build**: Vite
 - **Charts**: lightweight-charts 4.2.0
 - **Styling**: CSS Modules
+- **Deployment**: Cloudflare Pages
 
 ## 📝 License
 
