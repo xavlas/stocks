@@ -8,11 +8,28 @@ import { useSimulation } from './hooks/useSimulation';
 import { EquityChart } from './components/EquityChart';
 import { Login } from './components/Login';
 
+import { DEFAULT_INDICATOR_VISUALS } from './types/visuals';
+import { IndicatorControls } from './components/IndicatorControls';
+
 function Dashboard() {
   const { strategy } = useStrategy();
   const { runSimulation, isRunning, result, error } = useSimulation();
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const [isResizing, setIsResizing] = useState(false);
+  const [visuals, setVisuals] = useState(DEFAULT_INDICATOR_VISUALS);
+  const [backtestConfig, setBacktestConfig] = useState({
+    symbol: 'AAPL',
+    start: '2020-01-01',
+    end: '2023-12-31',
+    capital: 10000,
+    limit: undefined as number | undefined
+  });
+
+  const handleAutoBacktest = () => {
+    runSimulation(strategy, backtestConfig.symbol, backtestConfig.start, backtestConfig.end, backtestConfig.capital, backtestConfig.limit);
+  };
+
+  // ... (useEffect for resizing stay the same)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -104,7 +121,10 @@ function Dashboard() {
           {/* Controls Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <BacktestConfig
-              onRun={(sym, start, end, capital, limit) => runSimulation(strategy, sym, start, end, capital, limit)}
+              onRun={(sym, start, end, capital, limit) => {
+                setBacktestConfig({ symbol: sym, start, end, capital, limit });
+                runSimulation(strategy, sym, start, end, capital, limit);
+              }}
               isRunning={isRunning}
             />
             <RuleEditor />
@@ -120,7 +140,10 @@ function Dashboard() {
                     {result.metrics.netProfit >= 0 ? 'PROFITABLE' : 'LOSS'}
                   </div>
                 </div>
-                <EquityChart result={result} />
+                <EquityChart result={result} visuals={visuals} />
+                <div style={{ padding: '0 20px 20px 20px' }}>
+                  <IndicatorControls visuals={visuals} onChange={setVisuals} onToggle={handleAutoBacktest} />
+                </div>
               </div>
             ) : (
               <div className="card" style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', flexDirection: 'column', gap: '10px' }}>

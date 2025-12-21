@@ -40,7 +40,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 padding: '40px',
                 borderRadius: '20px',
                 boxShadow: '0px 20px 60px rgba(0,0,0,0.3)',
-                width: '400px',
+                width: '300px',
                 maxWidth: '90%'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>

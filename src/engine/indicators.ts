@@ -113,4 +113,22 @@ export class Indicators {
         }
         return results;
     }
+
+    static bollinger(data: number[], period: number = 20, multiplier: number = 2): { middle: number[], upper: number[], lower: number[] } {
+        const middle = this.sma(data, period);
+        const upper = new Array(data.length).fill(NaN);
+        const lower = new Array(data.length).fill(NaN);
+
+        for (let i = period - 1; i < data.length; i++) {
+            const slice = data.slice(i - period + 1, i + 1);
+            const avg = middle[i];
+            const squareDiffs = slice.map(v => Math.pow(v - avg, 2));
+            const stdDev = Math.sqrt(squareDiffs.reduce((a, b) => a + b, 0) / period);
+
+            upper[i] = avg + multiplier * stdDev;
+            lower[i] = avg - multiplier * stdDev;
+        }
+
+        return { middle, upper, lower };
+    }
 }

@@ -205,66 +205,100 @@ export const RuleEditor: React.FC = () => {
 
     return (
         <div className={`card ${styles.container}`}>
-            <h2>Strategy Rules</h2>
+            <div className={styles.titleHeader}>
+                <h2>Strategy Rules</h2>
+                {!isEditing && (
+                    <button
+                        onClick={() => { resetForm(); setIsEditing(true); }}
+                        style={{
+                            padding: '6px 12px',
+                            background: 'var(--primary-blue)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        + New Rule
+                    </button>
+                )}
+            </div>
 
             {!isEditing && strategy.rules.length === 0 && (
-                <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    <button onClick={() => addTemplate('golden-cross')} style={{ backgroundColor: '#26a69a', fontSize: '0.9em' }}>
-                        ⚡ Golden Cross (50/200)
-                    </button>
-                    <button onClick={() => addTemplate('trend-following')} style={{ backgroundColor: '#29b6f6', fontSize: '0.9em' }}>
-                        📈 Trend (SMA 20/50)
-                    </button>
-                    <button onClick={() => addTemplate('sma-7-14')} style={{ backgroundColor: '#ab47bc', fontSize: '0.9em' }}>
-                        🚀 Short Term (SMA 7/14)
-                    </button>
-                    <small style={{ width: '100%', display: 'block', color: '#888', marginTop: '5px' }}>
-                        Load a preset to get started quickly.
-                    </small>
+                <div style={{ marginBottom: '20px' }}>
+                    <div className={styles.templatePills}>
+                        <button className={styles.templatePill} onClick={() => addTemplate('golden-cross')} style={{ backgroundColor: '#26a69a' }}>
+                            <span>⚡</span> Golden Cross
+                        </button>
+                        <button className={styles.templatePill} onClick={() => addTemplate('trend-following')} style={{ backgroundColor: '#29b6f6' }}>
+                            <span>📈</span> Trend Following
+                        </button>
+                        <button className={styles.templatePill} onClick={() => addTemplate('sma-7-14')} style={{ backgroundColor: '#ab47bc' }}>
+                            <span>🚀</span> Short Term
+                        </button>
+                    </div>
                 </div>
             )}
 
             <div className={styles.ruleList}>
-                {strategy.rules.length === 0 && <p style={{ color: '#777' }}>No rules defined.</p>}
+                {strategy.rules.length === 0 && !isEditing && (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', background: '#F4F7FE', borderRadius: '20px', border: '2px dashed #E0E5F2' }}>
+                        <p style={{ color: '#777', margin: 0, fontSize: '14px' }}>No active strategy rules</p>
+                        <small style={{ color: '#AAA' }}>Add a rule or load a template above</small>
+                    </div>
+                )}
+
                 {strategy.rules.map((rule, index) => (
-                    <div key={rule.id} className={`${styles.ruleItem} ${styles[rule.action.type]}`}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+                    <div key={rule.id} className={`${styles.ruleItem} ${rule.action.type === 'sell' ? styles.sell : ''}`}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
                             <div style={{
-                                background: rule.action.type === 'buy' ? '#4CAF50' : '#E31A1A',
-                                color: 'white',
-                                width: '24px',
-                                height: '24px',
-                                borderRadius: '50%',
+                                background: rule.action.type === 'buy' ? 'rgba(38, 166, 154, 0.1)' : 'rgba(239, 83, 80, 0.1)',
+                                color: rule.action.type === 'buy' ? '#26a69a' : '#ef5350',
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '10px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '12px',
-                                fontWeight: 'bold',
+                                fontSize: '14px',
+                                fontWeight: 800,
                                 flexShrink: 0
                             }}>
-                                {index + 1}
+                                {rule.action.type === 'buy' ? 'B' : 'S'}{index + 1}
                             </div>
-                            <div>
-                                <strong>IF</strong> {rule.condition.left.type.toUpperCase()}
-                                {rule.condition.left.period && `(${rule.condition.left.period})`}
-                                {' '}{rule.condition.operator}{' '}
-                                {rule.condition.right.type === 'value'
-                                    ? rule.condition.right.value
-                                    : `${rule.condition.right.indicator?.type.toUpperCase()} (${rule.condition.right.indicator?.period || ''})`}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                    IF <span style={{ color: 'var(--primary-blue)' }}>{rule.condition.left.type.toUpperCase()}{rule.condition.left.period && `(${rule.condition.left.period})`}</span>
+                                    {' '}{rule.condition.operator}{' '}
+                                    <span style={{ color: 'var(--primary-blue)' }}>
+                                        {rule.condition.right.type === 'value'
+                                            ? rule.condition.right.value
+                                            : `${rule.condition.right.indicator?.type.toUpperCase()}${rule.condition.right.indicator?.period ? `(${rule.condition.right.indicator.period})` : ''}`}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                    Action: {rule.action.type} {rule.action.quantity} unit(s)
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <strong>THEN</strong> {rule.action.type === 'buy' ? '🟢 BUY' : '🔴 SELL'} {rule.action.quantity}
-                        </div>
-                        <div style={{ display: 'flex', gap: '5px', alignItems: 'center', position: 'relative' }}>
-                            {/* Info Icon with Tooltip */}
+
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <div
                                 onMouseEnter={() => setHoveredRuleId(rule.id)}
                                 onMouseLeave={() => setHoveredRuleId(null)}
                                 style={{
                                     cursor: 'help',
-                                    fontSize: '1.2em',
+                                    width: '32px',
+                                    height: '32px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '14px',
                                     color: '#2196F3',
+                                    background: '#F4F7FE',
+                                    borderRadius: '10px',
                                     position: 'relative'
                                 }}
                             >
@@ -274,24 +308,23 @@ export const RuleEditor: React.FC = () => {
                                         position: 'absolute',
                                         bottom: '100%',
                                         right: 0,
-                                        marginBottom: '8px',
+                                        marginBottom: '12px',
                                         backgroundColor: '#2C3E50',
                                         color: 'white',
-                                        padding: '10px 15px',
-                                        borderRadius: '8px',
-                                        fontSize: '12px',
-                                        whiteSpace: 'normal',
-                                        maxWidth: '300px',
+                                        padding: '12px 16px',
+                                        borderRadius: '12px',
+                                        fontSize: '11px',
+                                        fontWeight: 500,
+                                        width: '240px',
                                         zIndex: 1000,
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                                        fontStyle: 'italic',
-                                        lineHeight: '1.4'
+                                        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                                        lineHeight: '1.5'
                                     }}>
                                         {getRuleDescription(rule)}
                                         <div style={{
                                             position: 'absolute',
                                             bottom: '-6px',
-                                            right: '20px',
+                                            right: '10px',
                                             width: 0,
                                             height: 0,
                                             borderLeft: '6px solid transparent',
@@ -301,18 +334,16 @@ export const RuleEditor: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            <button className={styles.btnEdit} onClick={() => handleEdit(rule)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2em' }}>✏️</button>
-                            <button className={styles.btnDelete} onClick={() => removeRule(rule.id)}>X</button>
+                            <button className={styles.btnEdit} onClick={() => handleEdit(rule)}>✏️</button>
+                            <button className={styles.btnDelete} onClick={() => removeRule(rule.id)}>×</button>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {!isEditing ? (
-                <button onClick={() => { resetForm(); setIsEditing(true); }} style={{ marginTop: '20px' }}>+ Add Rule</button>
-            ) : (
+            {isEditing ? (
                 <div className={styles.form}>
-                    <h3>{editingId ? 'Edit Rule' : 'New Rule'}</h3>
+                    <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 700 }}>{editingId ? 'EDIT RULE' : 'CREATE NEW RULE'}</h4>
 
                     <div className={styles.row}>
                         <span className={styles.label}>IF</span>
@@ -320,8 +351,8 @@ export const RuleEditor: React.FC = () => {
                     </div>
 
                     <div className={styles.row}>
-                        <span className={styles.label}>Is</span>
-                        <select value={operator} onChange={e => setOperator(e.target.value)}>
+                        <span className={styles.label}>IS</span>
+                        <select value={operator} onChange={e => setOperator(e.target.value)} style={{ flex: 1 }}>
                             <option value=">">Greater (&gt;)</option>
                             <option value="<">Less (&lt;)</option>
                             <option value="==">Equal (==)</option>
@@ -331,10 +362,10 @@ export const RuleEditor: React.FC = () => {
                     </div>
 
                     <div className={styles.row}>
-                        <span className={styles.label}>Than</span>
+                        <span className={styles.label}>THAN</span>
                         <select value={rightType} onChange={e => setRightType(e.target.value as any)}>
-                            <option value="value">Value</option>
-                            <option value="indicator">Indicator</option>
+                            <option value="value">Constant Value</option>
+                            <option value="indicator">Another Indicator</option>
                         </select>
 
                         {rightType === 'value' ? (
@@ -347,41 +378,52 @@ export const RuleEditor: React.FC = () => {
                         ) : (
                             renderIndicatorInput(rightIndicator, setRightIndicator)
                         )}
+                    </div>
 
-                        {(rightType === 'indicator' || rightType === 'value') && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                <span style={{ fontSize: '12px', color: '#888' }}> Offset %:</span>
+                    {offsetPercent !== 0 || rightType === 'indicator' ? (
+                        <div className={styles.row}>
+                            <span className={styles.label}>OFFSET</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
                                 <input
                                     type="number"
                                     placeholder="0"
                                     value={offsetPercent}
                                     onChange={e => setOffsetPercent(Number(e.target.value))}
-                                    style={{ width: '50px' }}
+                                    style={{ width: '70px' }}
                                 />
+                                <span style={{ fontSize: '12px', color: '#888' }}>% (ex: 3 pour +3%)</span>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    ) : null}
 
                     <div className={styles.row}>
                         <span className={styles.label}>THEN</span>
-                        <select value={actionType} onChange={e => setActionType(e.target.value as any)}>
-                            <option value="buy">BUY</option>
-                            <option value="sell">SELL</option>
-                        </select>
-                        <input
-                            type="number"
-                            value={quantity}
-                            onChange={e => setQuantity(Number(e.target.value))}
-                            placeholder="Qty"
-                            style={{ width: '60px' }}
-                        />
+                        <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
+                            <select value={actionType} onChange={e => setActionType(e.target.value as any)} style={{ flex: 2 }}>
+                                <option value="buy">BUY ASSET</option>
+                                <option value="sell">SELL ASSET</option>
+                            </select>
+                            <input
+                                type="number"
+                                value={quantity}
+                                onChange={e => setQuantity(Number(e.target.value))}
+                                placeholder="Qty"
+                                style={{ flex: 1 }}
+                            />
+                        </div>
                     </div>
 
                     <div className={styles.actions}>
-                        <button onClick={handleCancel} style={{ background: '#555' }}>Cancel</button>
-                        <button onClick={handleSave}>Save Rule</button>
+                        <button onClick={handleCancel} style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: '#E0E5F2', color: 'var(--text-secondary)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                        <button onClick={handleSave} style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'var(--primary-blue)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Save Strategy Rule</button>
                     </div>
                 </div>
+            ) : (
+                strategy.rules.length > 0 && (
+                    <button className={styles.btnAddRule} onClick={() => { resetForm(); setIsEditing(true); }}>
+                        <span>+</span> Add another rule
+                    </button>
+                )
             )}
         </div>
     );
